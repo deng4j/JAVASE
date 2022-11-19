@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--约束-->
+<!DOCTYPE students SYSTEM  'student.dtd'>
+<!--自定义xml-->
+<students>
+    <student id="1">
+        <name >张三</name>
+        <age>23</age>
+        <info>学生&quot;xxx &quot;的信息</info>
+        <message><![CDATA[卧槽！你搞偷袭]]></message>
+    </student>
+    <student id="2">
+        <name>李四</name>
+        <age>24</age>
+    </student>
+</students>
