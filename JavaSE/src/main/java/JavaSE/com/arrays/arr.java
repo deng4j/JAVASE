@@ -11,6 +11,8 @@ public class arr {
 
         int arr4[]={1,2};
         arrString(arr4);
+
+        int[][] arr22=new int[2][3];
     }
 
     public static void arrString(int[] arr){
