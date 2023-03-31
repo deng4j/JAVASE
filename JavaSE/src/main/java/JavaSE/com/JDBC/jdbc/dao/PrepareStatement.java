@@ -1,4 +1,4 @@
-package JavaSE.com.JDBC.jdbc;
+package JavaSE.com.JDBC.jdbc.dao;
 
 
 import java.sql.*;

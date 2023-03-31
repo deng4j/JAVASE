@@ -1,4 +1,4 @@
-package JavaSE.com.JDBC.jdbc;
+package JavaSE.com.JDBC.jdbc.pojo;
 
 import java.util.Date;
 /**

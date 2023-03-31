@@ -1,4 +1,4 @@
-package JavaSE.com.JDBC.jdbc;
+package JavaSE.com.JDBC.jdbc.pojo;
 
 /**
  * 实体类使用包装数据类型

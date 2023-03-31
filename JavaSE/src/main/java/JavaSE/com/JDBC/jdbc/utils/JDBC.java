@@ -1,4 +1,4 @@
-package JavaSE.com.JDBC.jdbc;
+package JavaSE.com.JDBC.jdbc.utils;
 
 
 import java.sql.Connection;

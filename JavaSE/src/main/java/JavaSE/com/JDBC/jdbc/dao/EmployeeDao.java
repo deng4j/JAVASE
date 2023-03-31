@@ -1,4 +1,8 @@
-package JavaSE.com.JDBC.jdbc;
+package JavaSE.com.JDBC.jdbc.dao;
+
+import JavaSE.com.JDBC.jdbc.utils.JDBC;
+import JavaSE.com.JDBC.jdbc.pojo.Employee;
+import JavaSE.com.JDBC.jdbc.pojo.Section;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -13,7 +17,6 @@ import java.util.*;
  *      Statement createStatement()
  *      PreparedStatement  prepareStatement(sql)
  *      CallableStatement prepareCall(sql)。
- *
  */
 public class EmployeeDao {
     public static void main(String[] args) throws SQLException {
@@ -60,7 +63,6 @@ public class EmployeeDao {
 
     private static void select( Statement st) throws SQLException {
         //不能交替使用statement对象
-        update(st);
         //DQL语句方法
         //这种statement有被sql注入。" 'or'1'='1' "
         String sql="SELECT ename ,sname \n" +
@@ -69,7 +71,7 @@ public class EmployeeDao {
 
         ResultSet result = st.executeQuery(sql);
 
-        Map<Employee,Section> map=new HashMap<>();
+        Map<Employee, Section> map=new HashMap<>();
 
        /* while (result.next()){
             Employee e=new Employee();
@@ -86,9 +88,6 @@ public class EmployeeDao {
             s.setSname(result.getString("sname"));
             map.put(e,s);
         }
-
-
-
 
         Set<Map.Entry<Employee, Section>> entries = map.entrySet();
         Iterator<Map.Entry<Employee, Section>> itr = entries.iterator();
