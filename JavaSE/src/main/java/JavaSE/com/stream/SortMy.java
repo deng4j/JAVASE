@@ -21,8 +21,8 @@ public class SortMy {
         List<Area> areaList = Arrays.asList(area1, area2, area3, area4);
         Map<String, List<Area>> groupbyCar = areaList.stream().collect(Collectors.groupingBy(s -> s.getName()));
 
-        List<Area> newList=new ArrayList<>();
-        for (String s: list) {
+        List<Area> newList = new ArrayList<>();
+        for (String s : list) {
             List<Area> areas = groupbyCar.get(s);
             newList.addAll(areas);
         }
