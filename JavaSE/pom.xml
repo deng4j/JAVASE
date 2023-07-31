@@ -11,21 +11,15 @@
     <groupId>com.example</groupId>
     <artifactId>JavaSE</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>JavaSE</name>
-    <description>JavaSE</description>
+    <name>dzh.com.JavaSE</name>
+    <description>dzh.com.JavaSE</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <!-- mysql驱动 -->
@@ -70,6 +64,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
         </dependency>
 
 
@@ -89,6 +84,13 @@
             <groupId>ru.sms-activate</groupId>
             <artifactId>SMSActivateApi</artifactId>
             <version>1.0</version>
+        </dependency>
+
+        <!--		netty依赖-->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.39.Final</version>
         </dependency>
     </dependencies>
 
