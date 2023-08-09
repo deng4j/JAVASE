@@ -1,6 +1,6 @@
 package dzh.com.JavaSE.com.characteristic.interfaces.People;
 
-class People implements Hand {
+public class People implements Hand {
     public static void main(String[] args) {
         People p = new People();
         p.skin();

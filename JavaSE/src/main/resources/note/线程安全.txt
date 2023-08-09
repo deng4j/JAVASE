@@ -1,3 +1,0 @@
-Ad-hoc线程封闭：程序控制实现，最糟糕。
-堆栈封闭：局部变量，无并发。
-ThreadLocal封闭：ThreadLocal封装了一个map，k是线程id，v是要封闭的对象。

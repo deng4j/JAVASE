@@ -1,5 +1,8 @@
 package dzh.com.JavaSE.com.Thread.synchronizeds;
 
+/**
+ * 悲观锁：synchronized总是从最坏的角度出发，认为每次获取数据的时候，别人都有可能修改。
+ */
 public class Synchronized1 implements Runnable{
     private int i=50;
     @Override

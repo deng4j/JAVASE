@@ -1,7 +1,5 @@
 package dzh.com.JavaSE.com.Collection.map.treemap.domain;
 
-import org.jetbrains.annotations.NotNull;
-
 public class Student implements Comparable<Student>{
     private String naem;
     private int age;
@@ -39,7 +37,7 @@ public class Student implements Comparable<Student>{
     }
 
     @Override
-    public int compareTo(@NotNull Student s1) {
+    public int compareTo(Student s1) {
         return  s1.getAge()-this.getAge()==0?s1.getNaem().compareTo(this.getNaem()): s1.getAge()-this.getAge();
     }
 }

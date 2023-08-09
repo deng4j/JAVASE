@@ -7,9 +7,16 @@ package dzh.com.JavaSE.com.characteristic.interfaces;
  *  1.只能有一个抽象方法。
  *  2.可以有多个静态方法和默认方法。
  *  3.默认包含Object类的方法。
+ *
+ * 标记接口：是没有包含方法声明的接口，用来表明某个类实现了具有某种属性的接口，如Serializable接口。
  */
 @FunctionalInterface
 public interface FuncInterface {
 
     void show();
+
+    public static void main(String[] args) {
+        FuncInterface f = () -> System.out.println("show");
+        f.show();
+    }
 }

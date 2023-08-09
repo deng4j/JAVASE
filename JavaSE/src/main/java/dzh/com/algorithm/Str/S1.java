@@ -1,6 +1,9 @@
 package dzh.com.algorithm.Str;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 写一个算法，两个字符串比较，如：abcdefg,25abdfxx
@@ -12,60 +15,100 @@ import java.util.*;
  */
 public class S1 {
     public static void main(String[] args) {
-        String s1 = "abcdefg";
-        String s2 = "25abdfxx";
+        m1();
+    }
 
+    public static String mySubstring(String s, int startIndex, int endIndex, int endLength) {
+        return s.substring(startIndex + 1, endIndex);
+    }
+
+    /**
+     * 这个算法当例子是 11abcdefgab、25axxbdxgcb 会得到人脑不想要的结果
+     * 解决办法，相似性算法
+     */
+    private static void m1() {
+        String s1 = "11abcdefgab";
+        String s2 = "25axxbdxgb";
         char[] chars1 = s1.toCharArray();
         char[] chars2 = s2.toCharArray();
-        List<Character> list1 = new ArrayList<>();
-        for (char c : chars1) {
-            list1.add(c);
-        }
-        List<Character> list2 = new ArrayList<>();
-        for (char c : chars2) {
-            list2.add(c);
-        }
-        StringBuilder log = new StringBuilder();
-
-        // 判断头部有无多出
-        int i1 = s2.indexOf(chars1[0]);
-        if (i1>0){
-            log.append("位置"+0+"多出："+s2.substring(0,i1));
-            log.append("\n");
-            for (int i = 0; i < i1; i++) {
-                list2.remove(0);
-            }
-        }
-
-        //[a, b, c, d, e, f, g]
-        //[a, b, d, f, x, x]
-        int index1 = 0;
         int index2 = 0;
-        for (int i = index1; i < list1.size()-1; i++) {
-            for (int j = index2; j < list2.size(); j++) {
-                if (list1.get(i)==list2.get(j)){
-                    if (i==j){
-                        index1++;
-                        index2++;
-                        break;
+        int m1 = -1; // char1的记忆指针
+        int m2 = -1; // char2的记忆指针
+        for (int i = 0; i < chars1.length; i++) {
+            for (int j = index2; j < chars2.length; j++) {
+                if (chars1[i] == chars2[j]) {
+                    String subS1 = mySubstring(s1, m1, i, chars1.length);
+                    String subS2 = mySubstring(s2, m2, j, chars2.length);
+                    if (subS1.isEmpty() && !subS2.isEmpty()) {
+                        System.out.println("位置" + i + "多出：" + subS2);
                     }
-                    if (i>j){
-                        index2++;
-                        break;
+                    if (!subS1.isEmpty() && !subS2.isEmpty()) {
+                        for (int k = i - subS1.length(); k < i; k++) {
+                            System.out.println("位置" + k + "应该是：" + chars1[k]);
+                        }
                     }
-                } else if (j== list2.size()-1) {
-                    log.append("位置"+i+"缺少："+list1.get(i));
-                    log.append("\n");
+                    if (!subS1.isEmpty() && subS2.isEmpty()) {
+                        for (int k = i - subS1.length(); k < i; k++) {
+                            System.out.println("位置" + k + "缺少：" + chars1[k]);
+                        }
+                    }
+                    m1 = i;
+                    m2 = j;
+                    index2 = j;
+                    break;
                 }
             }
         }
+        // 处理末尾
+        if (chars1.length - 1 == m1) {
+            if (chars2.length - 1 != m2) {
+                System.out.println("位置" + (m1 + 1) + "多出：" + s2.substring(m2 + 1, chars2.length));
+            }
+        } else {
+            // 说明后面还有一串
+            for (int i = m1 + 1; i < chars1.length; i++) {
+                if (chars2.length - 1 != m2) {
+                    System.out.println("位置" + (i) + "应该是：" + chars1[i]);
+                } else {
+                    System.out.println("末尾位置" + (i) + "缺少：" + chars1[i]);
+                }
+            }
+        }
+    }
 
-        // 末尾判断
-        if (list1.get(list1.size()-1) !=list2.get(index2)){
-            log.append("位置"+(list1.size()-1)+"应该是："+list1.get(list1.size()-1));
-            log.append("\n");
+    /**
+     * 相似度匹配
+     */
+    private static void m2() {
+        String s1 = "11abcdefgab";
+        String s2 = "25axxbdxgcb";
+        char[] chars1 = s1.toCharArray();
+        char[] chars2 = s2.toCharArray();
+
+        Map<Integer, List<Integer>> similarMap = new HashMap<>();
+
+        // 命中
+        for (int i = 0; i < chars1.length; i++) {
+            List<Integer> list =new ArrayList<>();
+            similarMap.put(i,list);
+            for (int j = 0; j < chars2.length; j++) {
+                if (chars1[i] == chars2[j]) {
+                    list.add(j);
+                }
+            }
+        }
+        System.out.println(similarMap);
+        // 相似度匹配
+        Map<Integer, Integer> matchMap = new HashMap<>();
+        for (Map.Entry<Integer, List<Integer>> entry : similarMap.entrySet()) {
+            Integer key = entry.getKey();
+            List<Integer> list = entry.getValue();
+            if (list.isEmpty()){
+                matchMap.put(key,null);
+                break;
+            }
         }
 
-        System.out.println(log);
+
     }
 }

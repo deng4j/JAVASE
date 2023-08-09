@@ -7,7 +7,20 @@ package dzh.com.JavaSE.com.base.processControl;
  */
 public class For {
     public static void main(String[] args) {
-        m4();
+        m5();
+    }
+
+    private static void m5() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (j==5){
+                    System.out.println("j:"+j);
+                    // 停止该次循环
+                    break;
+                }
+            }
+            System.out.println("i:"+i);
+        }
     }
 
     private static void m4() {

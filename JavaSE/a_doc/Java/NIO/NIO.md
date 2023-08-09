@@ -2,6 +2,8 @@
 
 同步非阻塞 IO（non-blocking io）
 
+基于事件驱动模型Reactor
+
 新的输入/输出(NIO) 库是在JDK 1.4中引入的。NIO弥补了原来同步阻塞I/O的不足，它在标准Java代码中提供了高速的、面向块的I/O。通过定义包含数据的类，以及通过以块的形式处理这些数据，NIO不用使用本机代码就可以利用低级优化，这是原来的I/O包无法做到的。
 
 与Socket类和ServerSocket类相对应，NIO也提供了SocketChannel 和ServerSocketChannel两种不同的套接字通道实现。这两种新增的通道都支持阻塞和非阻塞两种模式。阻塞模式使用非常简单，但是性能和可靠性都不好，非阻塞模式则正好相反。开发人员可以根据自己的需要来选择合适的模式。一般来说，低负载、低并发的应用程序可以选择同步阻塞I/O以降低编程复杂度;对于高负载、高并发的网络应用，需要使用NIO的非阻塞模式进行开发。
@@ -171,6 +173,8 @@ Selector提供选择已经就绪的任务的能力。
 Selector会不断地轮询注册在其上的Channel，如果某个Channel上面发生读、写事件，这个Channel就处于就绪状态，会被Selector轮询出来，然后通过SelectionKey获取就绪Channel的集合，进行后续的I/O操作。SelectionKey关联了attachment附件。
 
 一个多路复用器Selector可以同时轮询多个Channel，由于JDK使用了epoll()代替传统的select实现，所以它并没有最大连接句柄1024/2048的限制。这也就意味着只需要一个线程负责Selector的轮询，就可以接入成千上万的客户端，这确实是个非常巨大的进步。
+
+![9940f95db7794ff9b9814a6c7a3eee7e (1)](assist/9940f95db7794ff9b9814a6c7a3eee7e (1).png)
 
 下面，我们通过NIO编程的序列图和源码分析来熟悉相关的概念，以便巩固前面所学的NIO基础知识。
 

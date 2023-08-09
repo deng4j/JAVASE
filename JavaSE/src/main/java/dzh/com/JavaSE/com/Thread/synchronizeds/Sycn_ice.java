@@ -3,9 +3,6 @@ package dzh.com.JavaSE.com.Thread.synchronizeds;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * 悲观锁：synchronized总是从最坏的角度出发，认为每次获取数据的时候，别人都有可能修改。
- */
 public class Sycn_ice implements Runnable {
     private  int ices=0;
     private Lock lock=new ReentrantLock();

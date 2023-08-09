@@ -2,6 +2,13 @@ package dzh.com.JavaSE.com.Thread.basic;
 
 /**
  * 缺点：不能直接使用Thread类中的方法
+ *
+ * 多线程也意味着有很多数据共享问题。
+ *
+ * 线程安全：
+ *  不可变对象：String、Long、BigInter
+ *  无条件线程安全：这个类的实例是可变的，但是这个类有足够的内部同步，如Random、ConcurrentHashMap
+ *  有条件的线程安全：有些方法为了进行安全的并发使用而需要外部同步。
  */
 public class Runnable1 implements Runnable {
     private  int i=100;

@@ -14,6 +14,11 @@ package dzh.com.JavaSE.com.characteristic.extend.extend1;
  * this关键字：指向自己的引用。
  *
  * Object 类是所有类的父类，也就是说 Java 的所有类都继承了 Object，子类可以使用 Object 的所有方法。
+ *
+ * 复合优先于继承。子类依赖父类的特定功能的实现细节。父类的实现有可能会随着发行版本的不同而有所变化，那么子类可能会遭到破坏。
+ * 只有两个类真正存在"is-a"的关系的时候才能继承拓展。
+ * 父类必须是为继承而设计，并提供文档说明，否则禁止继承。该文档必须精确说明覆盖每一个方法所带来的影响。
+ * 为了继承而设计的类，你应该考虑暴露那些域，一方面你要尽可能少的暴露受保护的成员，一方面不能暴露太少类，否则无法用于继承。
  */
 public class Manager extends Employee {
     private  int bonus;
@@ -33,7 +38,10 @@ public class Manager extends Employee {
     }
 
     public static void main(String[] args) {
-        Manager manager=new Manager("张三","001",20000,20000);
+        Employee manager=new Manager("张三","001",20000,20000);
         manager.work();
+
+        // 父类引用要想使用子类拓展功能，必须向下转型
+        ((Manager) manager).slackOff();
     }
 }

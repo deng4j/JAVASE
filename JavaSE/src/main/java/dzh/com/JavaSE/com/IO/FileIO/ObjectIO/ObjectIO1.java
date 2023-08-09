@@ -6,6 +6,10 @@ import lombok.Data;
 
 import java.io.*;
 
+/**
+ * java序列化的作用有两个，网络传输、对象持久化
+ * Java序列化的缺点：java序列化使用的是私有协议，无法跨语言反序列化
+ */
 @Data
 @AllArgsConstructor
 class Emloyee implements Serializable {
@@ -13,10 +17,6 @@ class Emloyee implements Serializable {
     private int salary;
 }
 
-/**
- * java序列化的作用有两个，网络传输、对象持久化
- * Java序列化的缺点：java序列化使用的是私有协议，无法跨语言反序列化
- */
 public class ObjectIO1 {
     public static void main(String[] args) {
         String classPath = ClassLoaderTest.class.getClassLoader().getResource("").getPath();

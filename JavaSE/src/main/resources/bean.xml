@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans>
-    <bean class="com.test.imiSpring.Teacher" id="teacher">
+    <bean class="dzh.com.demos.imiSpring.Teacher" id="teacher">
         <property fieldName="name" fieldValue="大风"/>
         <property fieldName="age" fieldValue="34"/>
 
     </bean>
-    <bean class="com.test.imiSpring.Student" id="student">
+    <bean class="dzh.com.demos.imiSpring.Student" id="student">
         <property fieldName="name" fieldValue="西门庆"/>
         <property fieldName="age" fieldValue="18"/>
     </bean>

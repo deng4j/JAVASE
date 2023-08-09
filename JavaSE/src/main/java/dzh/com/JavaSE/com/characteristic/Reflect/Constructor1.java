@@ -77,7 +77,7 @@ public class Constructor1 {
 
     private static void getConstructor(Class aClass) throws NoSuchMethodException {
         //返回单个公共的构造方法，参数必须一致
-        Constructor constructor = aClass.getConstructor ();
+        Constructor constructor = aClass.getConstructor();
         System.out.println("返回单个公共的构造方法，参数必须一致");
         System.out.println(constructor);
     }
