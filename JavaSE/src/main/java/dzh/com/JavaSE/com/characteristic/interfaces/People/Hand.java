@@ -13,6 +13,8 @@ package dzh.com.JavaSE.com.characteristic.interfaces.People;
  * Java 8 新增了接口的默认方法。
  * default修饰的目的是让接口可以拥有具体的方法，让接口内部包含了一些默认的方法实现。
  * 被default修饰的方法是接口的默认方法。既只要实现该接口的类，都具有这么一个默认方法，默认方法也可以被重写。
+ *
+ * 不能有私有变量，和私有抽象方法。
  */
 public interface Hand {
     // 手指数量
@@ -23,14 +25,14 @@ public interface Hand {
 
     // 默认方法体
     default void defaultWork(){
-        System.out.println("--defaultWork--");
+        System.out.println("----defaultWork----");
         System.out.println("--手指数量"+finger+"--");
-        blood();
+        Hand.blood();
+        skin();
     }
     private static void blood(){
         System.out.println("--血液流动--");
     }
-
     static void absorb(){
         System.out.println("--吸收天地精华--");
     }

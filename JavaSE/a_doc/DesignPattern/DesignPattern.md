@@ -112,3 +112,43 @@
 由于组合或聚合关系可以将已有的对象（也可称为成员对象）纳入到新对象中，使之成为新对象的一部分，因此新对象可以调用已有对象的功能，这样做可以使得成员对象的内部实现细节对于新对象不可见，所以这种复用又称为“黑箱”复用，相对继承关系而言，其耦合度相对较低，成员对象的变化对新对象的影响不大，可以在新对象中根据实际需要有选择性地调用成员对象的操作；合成复用可以在运行时动态进行，新对象可以动态地引用与成员对象类型相同的其他对象。 
 
 一般而言，如果两个类之间是“Has-A”的关系应使用组合或聚合，如果是“Is-A”关系可使用继 承。"Is-A"是严格的分类学意义上的定义，意思是一个类是另一个类的"一种"；而"Has-A"则不 同，它表示某一个角色具有某一项责任。
+
+# 二.设计心得
+
+==接口是对动作的抽象，表达的是 like a 的关系；抽象类是对根源的抽象，表达的是 is a 的关系。==
+
+![ArrayList-1-768x406-1](assist/ArrayList-1-768x406-1.png)
+
+- **公共的特性**尽可能在高层中加入，如List接口在AbstractList中实现，而不应该在ArrayList中实现。当你不确定会不会出现不需要该**特性**的具体实现类时，不应该设为公共特性。
+
+  > 类似问题：HashMap既然继承了AbstractMap为什么还要实现Map？
+  >
+  > java集合框架的创始人Josh Bloch描述，这样的写法是一个失误。
+  >
+  > [java - Why does LinkedHashSet extend HashSet and implement Set - Stack Overflow](https://stackoverflow.com/questions/2165204/why-does-linkedhashsete-extend-hashsete-and-implement-sete)
+
+- 抽象类应该实现所有具体实现类的公共细节，如AbstractList中的迭代器。
+
+- 抽象类中尽可能不设置成员属性，你所有需要的东西，都可以在抽象方法的返回值中得到。
+
+- 抽象类具体实现方法应该设计为抽象方法，让具体实现类实现细节。
+
+  ```java
+  public abstract int size();
+  
+  public boolean add(E e){
+    add(size(), e);
+    return true;
+  }
+  ```
+
+- 对于同一种方法，使用方法重载。"实现细节"在参数复杂的方法中实现。其他的简单方法只需要看情况调用这个实现方法即可。
+
+  ```java
+  public boolean add(E e){
+    add(size(), e);
+    return true;
+  }
+  
+  public abstract boolean add(int index, E e);
+  ```

@@ -4,7 +4,8 @@ import javassist.*;
 
 import java.io.IOException;
 
-/**字节码操作，先下载并导入Javassist.jar包
+/**
+ * 字节码操作，先下载并导入Javassist.jar包
  * Javassist是一个动态类库，可以用来检查、”动态”修改以及创建 Java类。其功能与jdk自带的反射功能类似，但比反射功能更强大。
  *
  * 重要的类

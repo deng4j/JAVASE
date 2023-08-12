@@ -4,7 +4,7 @@ package dzh.com.JavaSE.com.characteristic.Abstract;
  * 抽象类是用于描述对象的；
  * 抽象类除了不能实例化对象之外，类的其它功能依然存在，成员变量、成员方法和构造方法的访问方式和普通类一样。
  * 由于抽象类不能实例化对象，所以抽象类必须被继承，才能被使用。
- *
+ * <p>
  * JDK 1.8以前，抽象类的方法默认访问权限为protected
  * JDK 1.8时，抽象类的方法默认访问权限变为default
  */
@@ -17,9 +17,9 @@ public abstract class Farther {
      */
     public abstract void work();
 
-    public void show(){
-         System.out.println("我是Farther");
-     }
+    public void show() {
+        System.out.println("我是Farther");
+    }
 }
 
 class Children extends Farther {
@@ -33,8 +33,8 @@ class Children extends Farther {
     }
 
     public static void main(String[] args) {
-        Children children=new Children();
-        children.name="kk";
+        Children children = new Children();
+        children.name = "kk";
         children.work();
         System.out.println(children.name);
     }
