@@ -8,17 +8,22 @@ import java.util.concurrent.TimeUnit;
 /**
  * shutdown 只是将空闲的线程 interrupt() 了，shutdown（）之前提交的任务可以继续
  * 执行直到结束。
- *
  * shutdownNow 是 interrupt 所有线程， 因此大部分线程将立刻被中断。之所以是大部分，
  * 而不是全部 ，是因为 interrupt()方法能力有限。
+ *
+ * submit(Runnable)：返回一个 Future 对象。这个 Future 对象可以用来检查 Runnable 是否已经执行完毕。
+ * execute(Runnable):异步执行,没有执行结果。
+ *
+ * getTaskCount()：线程池已执行和未执行的任务总数
+ * getCompletedTaskCount()：已完成的任务数量
+ * getPoolSize()：线程池当前的线程数量
+ * getCorePoolSize()：线程池核心线程数
+ * getActiveCount():当前线程池中正在执行任务的线程数量
  */
 public class ThreadPoolExecutor2 {
     public static void main(String[] args) {
         /**
-         * ThreadPoolExecutor.AbortPolicy()丢弃超出部分，并抛出异常
-         * ThreadPoolExecutor.DiscardPolicy丢弃超出部分，不抛异常
-         * ThreadPoolExecutor.DIscardOldestpolicy()丢弃在等待队列中等待最久的任务
-         * ThreadPoolExecutor.CallerRunsPolicy()超出部分任务绕过线程池直接运行
+
          */
         ThreadPoolExecutor tpe=new ThreadPoolExecutor(3,5,
                 10,TimeUnit.SECONDS,new ArrayBlockingQueue<>(2)

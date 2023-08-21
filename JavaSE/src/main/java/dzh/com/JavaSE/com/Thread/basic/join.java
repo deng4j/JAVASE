@@ -5,6 +5,7 @@ import java.awt.*;
 
 /**
  * join()是 Thread 类中的一个方法，当我们需要让线程按照自己指定的顺序执行的时候，就可以利用这个方法。
+ *
  * Thread.join()方法表示调用此方法的线程被阻塞，仅当该方法完成以后，才能继续运行。
  */
 public class join extends JFrame {

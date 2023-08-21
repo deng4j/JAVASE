@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * submit(Runnable)：返回一个 Future 对象。这个 Future 对象可以用来检查 Runnable 是否已经执行完毕。
+ * Executors.newCachedThreadPool：创建一个可缓存的线程池，如果线程池的大小超过了需要，可以灵活回收空闲线程，如果没有可回收线程，则新建线程
  */
 public class NewCachedThreadPool1 {
     public static void main(String[] args) throws InterruptedException {

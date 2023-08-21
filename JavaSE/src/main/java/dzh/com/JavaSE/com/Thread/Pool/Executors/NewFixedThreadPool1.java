@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * execute(Runnable):异步执行,没有执行结果。
+ * Executors.newFixedThreadPool：创建一个定长的线程池，可以控制线程的最大并发数，超出的线程会在队列中等待。
  */
 public class NewFixedThreadPool1 {
     public static void main(String[] args) throws InterruptedException {

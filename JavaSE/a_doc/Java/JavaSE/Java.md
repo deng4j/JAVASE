@@ -1,27 +1,4 @@
-# 引用
 
-- 强引用：普通的引用，强引用指向的对象不会被回收；
-- 软引用：仅有软引用指向的对象，只有发生gc且内存不足，才会被回收；
-- 弱引用：仅有弱引用指向的对象，只要发生gc就会被回收。
-
-# 程序代理配置
-
-当你开代理时，有可能idea工具会走代理，而程序不走代理
-
-1.设置系统参数
-
-```java
-System.setProperty("http.proxySet", "true");
-System.setProperty("http.proxyHost", "127.0.0.1");
-System.setProperty("http.proxyPort", "19180");  
-```
-
-2.VM options设置
-
-```shell
-http代理： -DproxyHost=127.0.0.1 -DproxyPort=19180
-socks代理： -DsocksProxyHost=127.0.0.1 -DsocksProxyPort=19181
-```
 
 # 类加载
 
@@ -105,7 +82,18 @@ socks代理： -DsocksProxyHost=127.0.0.1 -DsocksProxyPort=19181
 
 如果使用强引用，当`ThreadLocal` 对象的引用（强引用）被回收了，`ThreadLocalMap`本身依然还持有`ThreadLocal`的强引用，如果没有手动删除这个key ,则`ThreadLocal`不会被回收，所以只要当前线程不消亡，`ThreadLocalMap`引用的那些对象就不会被回收， 可以认为这导致`Entry`内存泄漏。
 
+# 多线程
 
+**线程的生命周期** 
+
+![QQ20230813-120815@2x](/Users/deng4j/development/idea_project/project1/JavaSE/a_doc/Java/JavaSE/assist/QQ20230813-120815@2x.png)
+
+- NEW：初始状态，线程被构建，但是还没有调用 start()方法。
+- RUNNABLE：可运行状态，可运行状态可以包括：运行中状态和就绪状态。
+- BLOCKED：阻塞状态，处于这个状态的线程需要等待其他线程释放锁或者等待进入 synchronized。 
+- WAITING：表示等待状态，处于该状态的线程需要等待其他线程对其进行通知或中断等操作，进而进入下一个状态。
+- TIME_WAITING：超时等待状态。可以在一定的时间自行返回。
+- TERMINATED：终止状态，当前线程执行完毕。
 
 
 
