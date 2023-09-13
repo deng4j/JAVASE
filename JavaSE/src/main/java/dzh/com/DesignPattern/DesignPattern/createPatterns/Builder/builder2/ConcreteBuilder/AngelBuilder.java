@@ -1,9 +1,11 @@
-package dzh.com.DesignPattern.DesignPattern.createPatterns.Builder.builder2;
+package dzh.com.DesignPattern.DesignPattern.createPatterns.Builder.builder2.ConcreteBuilder;
+
+import dzh.com.DesignPattern.DesignPattern.createPatterns.Builder.builder2.ActorBuilder;
 
 /**
  * 天使角色建造器：具体建造者
  */
-public class AngelBuilder extends ActorBuilder{
+public class AngelBuilder extends ActorBuilder {
 
     @Override
     public void buildType() {

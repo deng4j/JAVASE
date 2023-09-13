@@ -8,9 +8,12 @@ import java.io.IOException;
  * public 与 返回值中间<T>非常重要，可以理解为声明此方法为泛型方法。
  * 只有声明了<T>的方法才是泛型方法，泛型类中的使用了泛型的成员方法并不是泛型方法。
  * <T>表明该方法将使用泛型类型T，此时才可以在方法中使用泛型类型T。
+ *
+ * 泛型方法 能够使方法独立于类的处理指定的类型。
+ *
  * 泛型的数量也可以为任意多个：public <T,K> K showKeyName(Generic<T> container{...}
  */
-public class M1<T1,T2> {
+public class M1 {
 	public static void main(String[] args) {
 		String a = test("a");
 		System.out.println(a);
@@ -23,6 +26,7 @@ public class M1<T1,T2> {
 		System.out.println(a instanceof String);
 		return a;
 	}
+
 	// extends <=
 	public static <T extends Closeable> void test(T... a){
 		for(T temp:a){

@@ -14,7 +14,10 @@ package dzh.com.JavaSE.com.characteristic.generics;
  *  N - Number（数值类型）
  *  ？ - 表示不确定的 java 类型
  *
- * 泛型没有多态
+ * 泛型没有多态，声明了什么类型，传入的参数就必须是该类型，不能是他的子类
+ *
+ * 在运行期只能获取当前class文件中包含泛型信息的泛型类型，而不能在运行时动态获取某个泛型引用的类型。
+ * 泛型的类型擦除是指把某个具体的泛型引用在编译期完成类型检查后，擦除成了Object而丢失了它运行时所赋予的类型信息。
  */
 public class G1<T> {
     private  T a;

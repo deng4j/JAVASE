@@ -86,10 +86,10 @@
 
 **线程的生命周期** 
 
-![QQ20230813-120815@2x](/Users/deng4j/development/idea_project/project1/JavaSE/a_doc/Java/JavaSE/assist/QQ20230813-120815@2x.png)
+![QQ20230813-120815@2x](assist/QQ20230813-120815@2x.png)
 
 - NEW：初始状态，线程被构建，但是还没有调用 start()方法。
-- RUNNABLE：可运行状态，可运行状态可以包括：运行中状态和就绪状态。
+- RUNNABLE：可运行状态，可运行状态可以包括：**运行中状态**和**就绪状态**。
 - BLOCKED：阻塞状态，处于这个状态的线程需要等待其他线程释放锁或者等待进入 synchronized。 
 - WAITING：表示等待状态，处于该状态的线程需要等待其他线程对其进行通知或中断等操作，进而进入下一个状态。
 - TIME_WAITING：超时等待状态。可以在一定的时间自行返回。

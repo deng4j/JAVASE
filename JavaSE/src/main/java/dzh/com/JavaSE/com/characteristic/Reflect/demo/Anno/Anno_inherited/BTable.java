@@ -1,4 +1,4 @@
-package dzh.com.JavaSE.com.characteristic.Anotation.Anno2_inherited;
+package dzh.com.JavaSE.com.characteristic.Reflect.demo.Anno.Anno_inherited;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

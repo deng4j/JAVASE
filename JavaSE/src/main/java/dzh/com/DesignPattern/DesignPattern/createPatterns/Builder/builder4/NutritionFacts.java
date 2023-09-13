@@ -1,4 +1,4 @@
-package dzh.com.DesignPattern.DesignPattern.createPatterns.Builder;
+package dzh.com.DesignPattern.DesignPattern.createPatterns.Builder.builder4;
 
 /**
  * 遇到多个构造参数时要考虑用构造器。
@@ -17,6 +17,7 @@ package dzh.com.DesignPattern.DesignPattern.createPatterns.Builder;
  * 缺点：
  *  1.为了创建对象，必须先创建构建器，开销很大。
  *  2.Builder模式比重叠构造器模式更加冗长，只有在很多参数时才能使用，比如4个以上。
+ *  3.不方便分步设置属性值
  */
 public class NutritionFacts { // 营养成分表
     private int servingSize;
@@ -25,6 +26,18 @@ public class NutritionFacts { // 营养成分表
     private int fat;
     private int sodium;
     private int carbohydrate;
+
+    @Override
+    public String toString() {
+        return "NutritionFacts{" +
+                "servingSize=" + servingSize +
+                ", servings=" + servings +
+                ", calories=" + calories +
+                ", fat=" + fat +
+                ", sodium=" + sodium +
+                ", carbohydrate=" + carbohydrate +
+                '}';
+    }
 
     public static class  Builder{
         // Required param

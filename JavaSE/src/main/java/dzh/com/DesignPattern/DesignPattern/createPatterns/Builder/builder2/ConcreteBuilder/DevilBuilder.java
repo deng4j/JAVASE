@@ -1,9 +1,11 @@
-package dzh.com.DesignPattern.DesignPattern.createPatterns.Builder.builder2;
+package dzh.com.DesignPattern.DesignPattern.createPatterns.Builder.builder2.ConcreteBuilder;
+
+import dzh.com.DesignPattern.DesignPattern.createPatterns.Builder.builder2.ActorBuilder;
 
 /**
  * 恶魔角色建造器：具体建造者
  */
-public class DevilBuilder extends ActorBuilder{
+public class DevilBuilder extends ActorBuilder {
     @Override
     public void buildType() {
         this.actor.setType("恶魔");

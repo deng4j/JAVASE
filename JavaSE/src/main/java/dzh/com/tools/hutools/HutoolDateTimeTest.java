@@ -55,5 +55,9 @@ public class HutoolDateTimeTest {
         dateTimeList.sort(comparator);
         System.out.println(dateTimeList);
     }
+
+    private void offset(){
+        System.out.println(DateUtil.offsetDay(new Date(),-8));
+    }
 }
 

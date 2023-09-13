@@ -8,5 +8,7 @@ public class Format {
         DecimalFormat df = new DecimalFormat("#.######");
         String str = df.format(Double.parseDouble("12.111222333444"));
         System.out.println(str);
+
+        System.out.println(String.format("[ %s ]", 22));
     }
 }
