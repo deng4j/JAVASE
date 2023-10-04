@@ -13,6 +13,9 @@ import java.util.function.BiConsumer;
  * 当链表长度大于8，table表长度小于64时，每次添加元素，table扩容。
  * 当链表长度大于8，table表长度大于64时，时转成红黑树
  * 当不满足红黑树条件，还会退化成链表
+ *
+ * jdk7是数组 + 链表，链表头插方式。多线程情况下数组扩容，因为是头插会将链表顺序反转，所以会造成死循环。
+ * jdk8是数组 + 链表（红黑树），链表尾查
  */
 public class hashmap1 {
     public static void main(String[] args) {

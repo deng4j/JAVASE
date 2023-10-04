@@ -22,14 +22,16 @@ class MyThread2 extends Thread{
     }
 
     /**
-     * 守护线程，普通线程执行完，守护线程就没必要执行了
+     * 守护线程，普通线程执行完，jvm就退出了，不管是否有守护线程
      */
     public static void main(String[] args) {
         MyThread1 m1=new MyThread1();
         MyThread2 m2=new MyThread2();
         m1.setName("m1");
         m2.setName("m2");
+
         m2.setDaemon(true);
+
         m1.start();
         m2.start();
     }

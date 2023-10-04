@@ -3,6 +3,9 @@ package dzh.com.JavaSE.com.Thread.basic;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * 测试静态方法
+ */
 public class StaticMethod implements Runnable{
 
     private static int a = 0;
