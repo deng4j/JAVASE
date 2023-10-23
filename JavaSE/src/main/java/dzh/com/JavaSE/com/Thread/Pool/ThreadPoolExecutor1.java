@@ -65,7 +65,7 @@ public class ThreadPoolExecutor1 {
          * 5.workQueue：阻塞队列，存储等待执行的任务，很重要，会对线程池运行过程产生重大影响。
          * 6.threadFactory：线程工厂，用来创建线程默认会提供一个默认的工厂来创建线程，当使用默认的工厂来创建线程时，会使新
          *   创建的线程具有相同的优先级，并且是非守护的线程，同时也设置了线程的名称。
-         * 7.handler：任务拒绝策略，如果任务数量超出了最大线程数+队列容量，则超出部分会被拒绝。
+         * 7.RejectedExecutionHandler：任务拒绝策略，如果任务数量超出了最大线程数+队列容量，则超出部分会被拒绝。
          *    - ThreadPoolExecutor.AbortPolicy()丢弃超出部分，并抛出异常
          *    - ThreadPoolExecutor.DiscardPolicy丢弃超出部分，不抛异常
          *    - ThreadPoolExecutor.DIscardOldestpolicy()丢弃在等待队列中等待最久的任务
