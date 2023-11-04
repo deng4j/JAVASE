@@ -3,7 +3,7 @@ package dzh.com.JavaSE.com.Thread.JUC.LockSupport;
 import java.util.concurrent.locks.LockSupport;
 
 /**
- * LockSupport是一个工具类，用于挂起和唤醒线程，是创建锁和其他同步类的基础。
+ * LockSupport是一个基于Unsafe的工具类，用于挂起和唤醒线程，是创建锁和其他同步类的基础。
  *
  * void park()：如果调用park方法的线程拿到了LockSupport关联的许可证，则调用LockSupport.park()时会马上返回，
  * 否则调用线程会被禁止参与与线程的调度，也就是被阻塞挂起。默认情况下调用线程是不持有许可证的。

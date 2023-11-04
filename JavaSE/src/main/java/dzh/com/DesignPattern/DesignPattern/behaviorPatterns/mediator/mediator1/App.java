@@ -8,7 +8,7 @@ import dzh.com.DesignPattern.DesignPattern.behaviorPatterns.mediator.mediator1.m
 import dzh.com.DesignPattern.DesignPattern.behaviorPatterns.mediator.mediator1.mediator.President;
 
 /**
- * 中介模式：解耦多个同事对象之间的交互关系。每个对象都持有中介者对象的引用，
+ * 中介模式：解耦多个同事对象之间的交互关系。`每个对象都持有中介者对象的引用`，
  * 只跟中介者对象打交道。通过中介者对象统一管理这些交互关系。
  *
  * 优点:
