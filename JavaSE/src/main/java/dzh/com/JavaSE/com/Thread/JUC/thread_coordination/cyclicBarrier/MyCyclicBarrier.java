@@ -21,18 +21,23 @@ public class MyCyclicBarrier implements Runnable {
     }
 
     public void startThread() {
-        //打印线程准备启动
         String name = Thread.currentThread().getName();
-        System.out.println(name + "：正在准备。。。");
-        //调用cyclicBarriar的await方法等线程全部准备完成
         try {
+            System.out.println(name + "：进入第一阶段");
+            //调用cyclicBarriar的await方法等线程全部准备完成
+
+            cyclicBarrier.await();
+
+            System.out.println(name + "：进入第二阶段");
+            //调用cyclicBarriar的await方法等线程全部准备完成
+
             cyclicBarrier.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (BrokenBarrierException e) {
             e.printStackTrace();
         }
-        System.out.println(name + "准备完毕");
+        System.out.println(name + "完毕");
     }
 
 
