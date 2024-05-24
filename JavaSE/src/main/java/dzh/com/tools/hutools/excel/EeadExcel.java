@@ -63,13 +63,18 @@ class Domain {
 
 }
 
+/**
+ * 以sku+批号为唯一标识
+ * 按仓库优先级，取一个原件，一个散件
+ *
+ */
 public class EeadExcel {
 
-    private static Boolean flag1; // 原件
-    private static Boolean flag2; // 散件
+    private static Boolean flag1 = false; // 原件
+    private static Boolean flag2 = false; // 散件
 
     public static void main(String[] args) {
-        ExcelReader reader = ExcelUtil.getReader(FileUtil.file("D:\\excel\\weipinjie.xlsx"), 0);
+        ExcelReader reader = ExcelUtil.getReader(FileUtil.file("D:\\temp\\excel\\weipinjie.xlsx"), 0);
 
         List<List<Object>> readAll = reader.read();
 
@@ -77,9 +82,7 @@ public class EeadExcel {
         System.out.println(readAll);
 
         List<Domain> domainList = new ArrayList<>();
-        int index = 0;
         for (List<Object> objects : readAll) {
-            index++;
             Domain domain = new Domain();
             domain.setK0(objects.get(0).toString());
             domain.setK1(objects.get(1).toString());
@@ -99,23 +102,32 @@ public class EeadExcel {
 
         System.out.println(domainList);
 
-        // 先按唯一code分组
+        // 先按唯一code分组，再按仓分组
         Map<String, Map<String, List<Domain>>> collect = domainList.stream().collect(Collectors.groupingBy(Domain::getK12,
                 Collectors.groupingBy(Domain::getK0)));
-        System.out.println(collect);
+        System.out.println(collect.get("24955523D20F0000"));
 
 
         Map<String, Map<String, List<Domain>>> collect1 = new HashMap<>();
         Map<String, Map<String, List<Domain>>> collect2 = new HashMap<>();
         for (Map.Entry<String, Map<String, List<Domain>>> stringMapEntry : collect.entrySet()) {
             Map<String, List<Domain>> value = stringMapEntry.getValue();
+            // 表示只有一个仓库
             if (value.size() == 1) {
-                collect1.put(stringMapEntry.getKey(), stringMapEntry.getValue());
+                for (Map.Entry<String, List<Domain>> entry : value.entrySet()) {
+                    // 且只有一条数据
+                    if (entry.getValue().size() == 1) {
+                        collect1.put(stringMapEntry.getKey(), stringMapEntry.getValue());
+                    } else {
+                        collect2.put(stringMapEntry.getKey(), stringMapEntry.getValue());
+                    }
+                }
+
             } else {
                 collect2.put(stringMapEntry.getKey(), stringMapEntry.getValue());
             }
         }
-        System.out.println(collect1); // 唯一仓
+        System.out.println(collect1); // 唯一仓，且只有一条数据
         System.out.println(collect2); // 多仓
 
 //        System.out.println("---------------------------------------");
@@ -142,13 +154,15 @@ public class EeadExcel {
                 for (Domain domain : domainList1) {
                     String k2 = domain.getK2();
 
-                    if (k2.equals("原件")&&Boolean.FALSE.equals(flag1)) {
+                    if (k2.equals("原件") && Boolean.FALSE.equals(flag1)) {
                         flag1 = true;
                         listLX.add(domain);
-                    } else if (k2.equals("散件")&&Boolean.FALSE.equals(flag2)) {
+                    }
+                    if (k2.equals("散件") && Boolean.FALSE.equals(flag2)) {
                         flag2 = true;
                         listLX.add(domain);
-                    } else if (k2.equals("散件、原件")) {
+                    }
+                    if (k2.equals("散件、原件")) {
                         flag1 = true;
                         flag2 = true;
                         listLX.add(domain);
@@ -163,9 +177,27 @@ public class EeadExcel {
             flag1 = false;
             flag2 = false;
         }
-//        System.out.println(listLX);
+
+        // 组合，剩下的只有原件和散件
+        Map<String, List<Domain>> collect3 = listLX.stream().collect(Collectors.groupingBy(Domain::getK12));
+
+        List<Domain> listLX1 = new ArrayList<>();
+        for (Map.Entry<String, List<Domain>> entry : collect3.entrySet()) {
+            List<Domain> value = entry.getValue();
+            if (value.size() == 2) {
+                if (value.get(0).getK0().equals(value.get(1).getK0())) {
+                    value.get(0).setK2("散件、原件");
+                    listLX1.add(value.get(0));
+                } else {
+                    listLX1.addAll(value);
+                }
+            } else {
+                listLX1.addAll(value);
+            }
+        }
+
         System.out.println("------------------------------------------");
-        System.out.println(JSONUtil.toJsonStr(listLX));
+        System.out.println(JSONUtil.toJsonStr(listLX1));
 
 
         List<List<Object>> data = new ArrayList<>();
@@ -193,7 +225,7 @@ public class EeadExcel {
             }
         }
 
-        for (Domain domain : listLX) {
+        for (Domain domain : listLX1) {
             List<Object> list22 = new ArrayList<>();
             list22.add(domain.getK0());
             list22.add(domain.getK1());
@@ -210,7 +242,7 @@ public class EeadExcel {
             data.add(list22);
         }
 
-        ExcelWriter writer = ExcelUtil.getWriter(FileUtil.file("D:\\excel\\111111.xlsx"));
+        ExcelWriter writer = ExcelUtil.getWriter(FileUtil.file("D:\\temp\\excel\\111111.xlsx"));
 
         //普通的单元格设置样式
         CellStyle cellStyle = writer.getCellStyle();
