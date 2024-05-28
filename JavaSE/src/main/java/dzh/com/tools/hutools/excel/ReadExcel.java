@@ -68,7 +68,7 @@ class Domain {
  * 按仓库优先级，取一个原件，一个散件
  *
  */
-public class EeadExcel {
+public class ReadExcel {
 
     private static Boolean flag1 = false; // 原件
     private static Boolean flag2 = false; // 散件
@@ -186,6 +186,7 @@ public class EeadExcel {
             List<Domain> value = entry.getValue();
             if (value.size() == 2) {
                 if (value.get(0).getK0().equals(value.get(1).getK0())) {
+                    value.get(0).setK1(value.get(0).getK1()+"、"+value.get(1).getK1());
                     value.get(0).setK2("散件、原件");
                     listLX1.add(value.get(0));
                 } else {
@@ -219,7 +220,7 @@ public class EeadExcel {
                     list1.add(domain.getK8());
                     list1.add(domain.getK9());
                     list1.add(domain.getK10());
-                    list1.add(domain.getK11());
+                    list1.add(domain.getK11().equals("null")?"":domain.getK11());
                     data.add(list1);
                 }
             }
@@ -238,7 +239,7 @@ public class EeadExcel {
             list22.add(domain.getK8());
             list22.add(domain.getK9());
             list22.add(domain.getK10());
-            list22.add(domain.getK11());
+            list22.add(domain.getK11().equals("null")?"":domain.getK11());
             data.add(list22);
         }
 
