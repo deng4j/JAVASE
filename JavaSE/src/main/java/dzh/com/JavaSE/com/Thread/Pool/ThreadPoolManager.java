@@ -121,4 +121,23 @@ public final class ThreadPoolManager {
     public void shutdown() {
         mThreadPool.shutdown();
     }
+
+    /**
+     * 等待线程池执行完毕方法1：isTerminated 实现方式
+     * 判断线程池的所有任务是否执行完
+     */
+    public void isCompleted() {
+        mThreadPool.shutdown();
+        while (!mThreadPool.isTerminated()) { // 如果没有执行完就一直循环
+        }
+    }
+
+    /**
+     * 等待线程池执行完毕方法2：getCompletedTaskCount 实现方式
+     * 判断线程池的所有任务是否执行完
+     */
+    public void isCompletedByTaskCount() {
+        while (mThreadPool.getTaskCount() != mThreadPool.getCompletedTaskCount()) {
+        }
+    }
 }

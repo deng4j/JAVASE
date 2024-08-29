@@ -1,7 +1,6 @@
 package dzh.com.JavaSE.com.Memory;
 
 import dzh.com.JavaSE.com.Memory.OutOfMemoryError.HeapOOM;
-import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
