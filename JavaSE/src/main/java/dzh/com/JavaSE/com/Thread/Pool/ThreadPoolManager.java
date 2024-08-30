@@ -125,6 +125,7 @@ public final class ThreadPoolManager {
     /**
      * 等待线程池执行完毕方法1：isTerminated 实现方式
      * 判断线程池的所有任务是否执行完
+     * 缺点，不能重复使用，因为线程池shutdown了
      */
     public void isCompleted() {
         mThreadPool.shutdown();
