@@ -1749,27 +1749,362 @@ Java虚拟机通过索引定位的方式使用局部变量表，索引值的范�
 
 ![QQ20230820-185450@2x](assist/QQ20230820-185450@2x.png)
 
+### 1.3 动态连接
 
+每个栈帧都包含一个指向运行时常量池中该栈帧所属方法的引用，持有这个引用是为了支持方法调用过程中的动态连接（Dynamic Linking）。我们知道Class文件的常量池中存有大量的符号引用，字节码中的方法调用指令就以常量池里指向方法的符号引用作为参数。这些符号 引用一部分会在类加载阶段或者第一次使用的时候就被转化为直接引用，这种转化被称为静态解析。 另外一部分将在每一次运行期间都转化为直接引用，这部分就称为动态连接。
 
+### 1.4 方法返回地址
 
+当一个方法开始执行后，只有两种方式退出这个方法。
 
+1. 第一种方式是执行引擎遇到任意一个方法 返回的字节码指令，这时候可能会有返回值传递给上层的方法调用者（调用当前方法的方法称为调用者或者主调方法），方法是否有返回值以及返回值的类型将根据遇到何种方法返回指令来决定，这种退出方法的方式称为“正常调用完成”（Normal Method Invocation Completion）。
+2. 另外一种退出方式是在方法执行的过程中遇到了异常，并且这个异常没有在方法体内得到妥善处理。无论是Java虚拟机内部产生的异常，还是代码中使用athrow字节码指令产生的异常，只要在本方法的异常表中没有搜索到匹配的异常处理器，就会导致方法退出，这种退出方法的方式称为“异常调用 完成（Abrupt Method Invocation Completion）”。一个方法使用异常完成出口的方式退出，是不会给它的上层调用者提供任何返回值的。
 
+无论采用何种退出方式，在方法退出之后，都必须返回到最初方法被调用时的位置，程序才能继续执行，方法返回时可能需要在栈帧中保存一些信息，用来帮助恢复它的上层主调方法的执行状态。
 
+一般来说，方法正常退出时，主调方法的PC计数器的值就可以作为返回地址，栈帧中很可能会保存这 个计数器值。而方法异常退出时，返回地址是要通过异常处理器表来确定的，栈帧中就一般不会保存这部分信息。
 
+方法退出的过程实际上等同于把当前栈帧出栈，因此退出时可能执行的操作有：恢复上层方法的局部变量表和操作数栈，把返回值（如果有的话）压入调用者栈帧的操作数栈中，调整PC计数器的值以指向方法调用指令后面的一条指令等。
 
+## 2.方法调用
 
+方法调用并不等同于方法中的代码被执行，方法调用阶段唯一的任务就是确定被调用方法的版本（即调用哪一个方法），暂时还未涉及方法内部的具体运行过程。
 
+在程序运行时，进行方法调用是最 普遍、最频繁的操作之一，Class文件的编译过程中不包含传统程序语言编译的连接步骤，一切方法调用在Class文件里面存储的都只是符号引用，而不是方法在实际运行时内存布局中的入口地址（也就是之前说的直接引用）。
 
+这个特性给Java带来了更强大的动态扩展能力，但也使 得Java方法调用过程变得相对复杂，某些调用需要在类加载期间，甚至到运行期间才能确定目标方法的直接引用。
 
+### 2.1 解析
 
+所有方法调用的目标方法在Class文件里面都是一个常量池中的符号引用，在类加载的解析阶段，会将其中的一部分符号引用转化为直接引用，这种解析能够成立的前提是：方法在程序真正运行之前就有一个可确定的调用版本，并且这个方法的调用版本在运行期是不可改变的。换句话说，调用目标在程序代码写好、编译器进行编译那一刻就已经确定下来。这类方法的调用被称为解析（Resolution）。
 
+在Java语言中符合“编译期可知，运行期不可变”这个要求的方法，主要有**静态方法**和**私有方法**两大类，前者与类型直接关联，后者在外部不可被访问，这两种方法各自的特点决定了它们都不可能通过继承或别的方式重写出其他版本，因此它们都适合在类加载阶段进行解析。
 
+调用不同类型的方法，字节码指令集里设计了不同的指令。在Java虚拟机支持以下5条方法调用字节码指令，分别是：
 
+- invokestatic。用于调用静态方法。
 
+- invokespecial。用于调用实例构造器`<init>()`方法、私有方法和父类中的方法。
 
+- invokevirtual。用于调用所有的虚方法。
 
+- invokeinterface。用于调用接口方法，会在运行时再确定一个实现该接口的对象。
 
+- invokedynamic。先在运行时动态解析出调用点限定符所引用的方法，然后再执行该方法。
 
+  前面4条调用指令，分派逻辑都固化在Java虚拟机内部，而invokedynamic指令的分派逻辑是由用户设定的引导方法来决定的。
 
+只要能被invokestatic和invokespecial指令调用的方法，都可以在解析阶段中确定唯一的调用版本，Java语言里符合这个条件的方法共有静态方法、私有方法、实例构造器、父类方法4种，再加上被final修饰的方法（尽管它使用invokevirtual指令调用），这5种方法调用会在类加载的时候就可以把符号引用解析为该方法的直接引用。这些方法统称为“非虚方法”（Non-Virtual Method），与之相反，其他方法就被称为“虚方法”（Virtual Method）。
 
+解析调用一定是个静态的过程，在编译期间就完全确定，在类加载的解析阶段就会把涉及的符号引用全部转变为明确的直接引用，不必延迟到运行期再去完成。而另一种主要的方法调用形式：分派（Dispatch）调用则要复杂许多，它可能是静态的也可能是动态的，按照分派依据的宗量数可分为单分派和多分派。这两类分派方式两两组合就构成了静态单分派、静态多分派、动态单分派、动态多分派4种分派组合情况。
+
+### 2.2 分派（多态）
+
+#### 2.2.1 静态分派
+
+虚拟机（或者准确地说是编译器）在重载时是通过参数的静态类型而不是实际类型作为判定依据的。
+
+由于静态类型在编译期可知，所以在编译阶段，Javac编译器就根据参数的静态类型决定了会使用哪个重载版本。并把这个方法的符号引用写到 main()方法里的两条invokevirtual指令的参数中。
+
+```java
+public class ExtendMethodOverload {
+
+    static abstract class Human {
+    }
+
+    static class Man extends Human {
+    }
+
+    static class Woman extends Human {
+    }
+
+    public void sayHello(Human guy) {
+        System.out.println("hello,guy!");
+    }
+
+    public void sayHello(Man guy) {
+        System.out.println("hello,gentleman!");
+    }
+
+    public void sayHello(Woman guy) {
+        System.out.println("hello,lady!");
+    }
+
+    public static void main(String[] args) {
+        Human man = new Man();
+        Human woman = new Woman();
+        ExtendMethodOverload extendMethodOverload = new ExtendMethodOverload();
+        extendMethodOverload.sayHello(man);
+        extendMethodOverload.sayHello(woman);
+    }
+}
+```
+
+结果
+
+```java
+hello,guy!
+hello,guy!
+```
+
+代码中的“Human”称为变量的“静态类型”（Static Type），或者叫“外观类型”（Apparent Type），后面的“Man”则被称为变量的“实际类型”（Actual Type）或者叫“运行时类型”（Runtime Type）。静态类型和实际类型在程序中都可能会发生变化，区别是静态类型的变化仅仅在使用时发生，变量本身的静态类型不会被改变，并且最终的静态类型是在编译期可知的；而实际类型变化的结果在运行期才可确定，编译器在编译程序的时候并不知道一个对象的实际类型是什么。
+
+所有依赖静态类型来决定方法执行版本的分派动作，都称为**静态分派**。静态分派的最典型应用表现就是方法重载。
+
+---
+
+```java
+public class Suitable {
+    public static void sayHello(Object arg) {
+        System.out.println("hello Object");
+    }
+
+    public static void sayHello(int arg) {
+        System.out.println("hello int");
+    }
+
+    public static void sayHello(long arg) {
+        System.out.println("hello long");
+    }
+
+    public static void sayHello(Character arg) {
+        System.out.println("hello Character");
+    }
+
+    public static void sayHello(char arg) {
+        System.out.println("hello char");
+    }
+
+    public static void sayHello(char... arg) {
+        System.out.println("hello char ...");
+    }
+
+    public static void sayHello(Serializable arg) {
+        System.out.println("hello Serializable");
+    }
+
+    public static void main(String[] args) {
+        sayHello('a');
+    }
+}
+```
+
+结果：
+
+```java
+hello char
+```
+
+> * 'a'是一个char类型的数据，自然会寻找参数类型为char的重载方法，如果注释掉sayHello(char arg)方法，就会找sayHello(int arg)方法，因为'a'还能代表数字97。
+> * 如果继续注释掉sayHello(int arg)方法，就会找sayHello(long arg)方法，'a'转型为整数97之后，进一步转型为长整数97L。
+> * 如果继续注释掉sayHello(long arg)方法，就会找sayHello(Character arg)方法，因为'a'被包装为它的封装类型java.lang.Character，这时发生了一次自动装箱。
+> * 继续注释掉sayHello(Serializable arg)方法，就会找sayHello(Object arg)，这是因为char装箱后转型为父类了，如果有多个父类，那将在继承关系中从下往上开始搜索，越接上层的优先级越低。
+> * 继续注释掉sayHello(Serializable arg)方法，就会找sayHello(char... arg)，这时候字符'a'被当 作了一个char[]数组的元素。
+
+当自动装箱之后发现还是找不到装箱类，但是找到了装箱类所实现的接口类型，所以紧接着又发生一次自动转型。
+
+Character还实现 了另外一个接口`java.lang.Comparable<Character>`，如果同时出现两个参数分别为Serializable和`Comparable<Character>`的重载方法，那它们在此时的优先级是一样的。编译器无法确定要自动转型为 哪种类型，会提示“类型模糊”（Type Ambiguous），并拒绝编译。程序必须在调用时显式地指定字面 量的静态类型，如：`sayHello((Comparable<Character>)'a')`，才能编译通过。
+
+#### 2.2.2 动态分派
+
+```java
+public class DynamicDispatch {
+    static abstract class Human {
+        protected abstract void sayHello();
+    }
+
+    static class Man extends Human {
+        @Override
+        protected void sayHello() {
+            System.out.println("man say hello");
+        }
+    }
+
+    static class Woman extends Human {
+        @Override
+        protected void sayHello() {
+            System.out.println("woman say hello");
+        }
+    }
+
+    public static void main(String[] args) {
+        Human man = new Man();
+        Human woman = new Woman();
+        man.sayHello();
+        woman.sayHello();
+        man = new Woman();
+        man.sayHello();
+    }
+}
+```
+
+结果：
+
+```java
+man say hello
+woman say hello
+woman say hello
+```
+
+导致这个现象的原因很明显，是因为这两个变量的实际类型不同。
+
+```java
+public static void main(java.lang.String[]);
+    Code:
+        Stack=2, Locals=3, Args_size=1
+         0:   new     #16; //class org/fenixsoft/polymorphic/DynamicDispatch$Man
+         3:   dup
+         4:   invokespecial   #18; //Method org/fenixsoft/polymorphic/Dynamic Dispatch$Man."<init>":()V
+         7:   astore_1
+         8:   new     #19; //class org/fenixsoft/polymorphic/DynamicDispatch$Woman
+        11:  dup
+        12:  invokespecial   #21; //Method org/fenixsoft/polymorphic/DynamicDispatch$Woman."<init>":()V
+        15:  astore_2
+        16:  aload_1
+        17:  invokevirtual   #22; //Method org/fenixsoft/polymorphic/Dynamic Dispatch$Human.sayHello:()V
+        20:  aload_2
+        21:  invokevirtual   #22; //Method org/fenixsoft/polymorphic/Dynamic Dispatch$Human.sayHello:()V
+        24:  new     #19; //class org/fenixsoft/polymorphic/DynamicDispatch$Woman
+        27:  dup
+        28:  invokespecial   #21; //Method org/fenixsoft/polymorphic/DynamicDispatch$Woman."<init>":()V
+        31:  astore_1
+        32:  aload_1
+        33:  invokevirtual   #22; //Method org/fenixsoft/polymorphic/Dynamic Dispatch$Human.sayHello:()V
+        36:  return
+```
+
+ 0～15行的字节码是准备动作，作用是建立man和woman的内存空间、调用Man和Woman类型的实例构造器，将这两个实例的引用存放在第1、2个局部变量表的变量槽中，这些动作实际对应了Java源码中的这两行：
+
+```java
+Human man = new Man();
+Human woman = new Woman();
+```
+
+接下来的16～21行是关键部分，16和20行的aload指令分别把刚刚创建的两个对象的引用压到栈顶，这两个对象是将要执行的sayHello()方法的所有者，称为接收者（Receiver）；17和21行是方法调用指令，这两条调用指令单从字节码角度来看，无论是指令（都是invokevirtual）还是参数（都是常量池中第22项的常量，注释显示了这个常量是Human.sayHello()的符号引用）都完全一样，但是这两句指令最终执行的目标方法并不相同。那看来解决问题的关键还必须从invokevirtual指令本身入手，要弄清楚它是如何确定调用方法版本、如何实现多态查找来着手分析才行。
+
+根据《Java虚拟机规范》，invokevirtual指令的运行时解析过程大致分为以下几步：
+
+1. 找到操作数栈顶的第一个元素所指向的对象的实际类型，记作C。
+2. 如果在类型C中找到与常量中的描述符和简单名称都相符的方法，则进行访问权限校验，如果通过则返回这个方法的直接引用，查找过程结束；不通过则返回java.lang.IllegalAccessError异常。
+3. 否则，按照继承关系从下往上依次对C的各个父类进行第二步的搜索和验证过程。
+4. 如果始终没有找到合适的方法，则抛出java.lang.AbstractMethodError异常。
+
+正是因为invokevirtual指令执行的第一步就是在运行期确定接收者的实际类型，所以两次调用中的invokevirtual指令并不是把常量池中方法的符号引用解析到直接引用上就结束了，还会根据方法接收者的实际类型来选择方法版本，这个过程就是Java语言中**方法重写的本质**。我们把这种在运行期根据实际类型确定方法执行版本的分派过程称为动态分派。
+
+---
+
+既然这种多态性的根源在于虚方法调用指令invokevirtual的执行逻辑，那自然我们得出的结论就**只会对方法有效，对字段是无效的，因为字段不使用这条指令**。
+
+事实上，在Java里面只有虚方法存在，字段永远不可能是虚的，换句话说，字段永远不参与多态，哪个类的方法访问某个名字的字段时，该名字指的就是这个类能看到的那个字段。当子类声明了与父类同名的字段时，虽然在子类的内存中两个字段都会存在，但是子类的字段会遮蔽父类的同名字段。
+
+```java
+public class FieldHasNoPolymorphic {
+
+    static class Father {
+        public int money = 1;
+
+        public Father() {
+            money = 2;
+            showMeTheMoney();
+        }
+
+        public void showMeTheMoney() {
+            System.out.println("I am Father, i have $" + money);
+        }
+    }
+
+    static class Son extends Father {
+        public int money = 3;
+
+        public Son() {
+            money = 4;
+            showMeTheMoney();
+        }
+
+        public void showMeTheMoney() {
+            System.out.println("I am Son,  i have $" + money);
+        }
+    }
+
+    public static void main(String[] args) {
+        Father gay = new Son();
+        System.out.println("This gay has $" + gay.money);
+    }
+}
+```
+
+结果：
+
+```java
+I am Son,  i have $0
+I am Son,  i have $4
+This gay has $2
+```
+
+输出两句都是“I am Son”，这是因为Son类在创建的时候，首先隐式调用了Father的构造函数，而Father构造函数中对showMeTheMoney()的调用是一次虚方法调用，实际执行的版本是Son::showMeTheMoney()方法，所以输出的是“I am Son”。
+
+而这时候虽然父类的money字段已经被初始化成2了，但Son::showMeTheMoney()方法中访问的却是子类的money字段，这时候结果自然还是0，因为它要到子类的构造函数执行时才会被初始化。
+
+main()的最后一句通过静态类型访问到了父类中的money，输出了2。
+
+#### 2.2.3 单分派与多分派
+
+方法的接收者与方法的参数统称为方法的**宗量**，根据分派基于多少种宗量，可以将分派划分为单分派和多分派两种。
+
+- 单分派是根据一个宗量对目标方法进行选择
+- 多分派则是根据多于一个宗量对目标方法进行选择
+
+```java
+public class Dispatch {
+    static class QQ {
+    }
+
+    static class _360 {
+    }
+
+    public static class Father {
+        public void hardChoice(QQ arg) {
+            System.out.println("father choose qq");
+        }
+
+        public void hardChoice(_360 arg) {
+            System.out.println("father choose 360");
+        }
+    }
+
+    public static class Son extends Father {
+        public void hardChoice(QQ arg) {
+            System.out.println("son choose qq");
+        }
+
+        public void hardChoice(_360 arg) {
+            System.out.println("son choose 360");
+        }
+    }
+
+    public static void main(String[] args) {
+        Father father = new Father();
+        Father son = new Son();
+        father.hardChoice(new _360());
+        son.hardChoice(new QQ());
+    }
+}
+```
+
+结果：
+
+```java
+father choose 360
+son choose qq
+```
+
+首先编译阶段中编译器的选择过程，也就是静态分派的过程。这时候选择目标方法的依据有两点：一是静态类型是Father还是Son，二是方法参数是QQ还是360。
+
+这次选择结果的最终产物是产生了两条invokevirtual指令，两条指令的参数分别为常量池中指向Father::hardChoice(360)及Father::hardChoice(QQ)方法的符号引用。因为是根据两个宗量进行选择，所以Java语言的**静态分派属于多分派类型**。
+
+再看看运行阶段中虚拟机的选择，也就是动态分派的过程。在执行“son.hardChoice(new QQ())”这行代码时，更准确地说，是在执行这行代码所对应的invokevirtual指令时，由于编译期已经决定目标方法的签名必须为hardChoice(QQ)，虚拟机此时不会关心传递过来的参数“QQ”到底是“腾讯QQ”还是“奇瑞QQ”，因为这时候参数的静态类型、实际类型都对方法的选择不会构成任何影响，唯一可以影响虚拟机选择的因素只有该方法的接受者的实际类型是Father还是Son。因为只有一个宗量作为选择依据，所以**Java语言的动态分派属于单分派类型**。
+
+结论：Java语言是一门静态多分派、动态单分派的语言。
+
+#### 2.2.4 虚拟机动态分派的实现
 
