@@ -7,7 +7,7 @@ import java.util.List;
 // 给数据列添加引号和逗号
 public class StrAddQuotationMarks {
     public static void main(String[] args) throws IOException {
-        String path="C:\\Users\\邓志鸿\\Desktop\\temp.txt";
+        String path="C:\\Users\\13539\\Desktop\\temp.txt";
         File file = new File(path);
         if (!file.exists()){
             System.out.println("创建文件："+path);
