@@ -7,7 +7,7 @@ package dzh.com.JavaSE.com.base.processControl;
  */
 public class For {
     public static void main(String[] args) {
-        m7();
+        m6();
     }
 
     /**
@@ -31,6 +31,13 @@ public class For {
     private static void m6() {
         for (int i = 0; i < 10; i++) {
             if (i == 5) continue; // 跳过本次循环
+            System.out.println(i);
+        }
+
+        System.out.println("------------------------------------");
+
+        for (int i = 0; i < 10; i++) {
+            if (i == 5) return; // 退出方法
             System.out.println(i);
         }
     }
