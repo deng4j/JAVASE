@@ -7,8 +7,8 @@ import cn.hutool.poi.excel.ExcelUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-// 找一列数据在另外一列中不存在的数据
-public class DataFind {
+// 找第一列数据在第二列中不存在的数据
+public class DataNotFind {
 
     public static void main(String[] args) {
         ExcelReader reader = ExcelUtil.getReader(FileUtil.file("D:\\temp\\work\\xadsa.XLSX"), 0);
@@ -23,8 +23,6 @@ public class DataFind {
             dataA.add(objects.get(0).toString());
             dataD.add(objects.get(1).toString());
         }
-        System.out.println(dataA);
-        System.out.println(dataD);
 
         List<String> notFindList = new ArrayList<>();
 
@@ -41,6 +39,7 @@ public class DataFind {
             }
         }
 
+        System.out.println("---------------------------");
         System.out.println(notFindList);
 
     }

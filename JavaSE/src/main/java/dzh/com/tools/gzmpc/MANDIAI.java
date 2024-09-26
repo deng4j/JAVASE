@@ -1,4 +1,4 @@
-package dzh.com.tools.hutools.HTTP;
+package dzh.com.tools.gzmpc;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.http.HttpRequest;
@@ -9,6 +9,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+// 界面系统满袋确认
 public class MANDIAI {
 
     public static void main(String[] args) {
