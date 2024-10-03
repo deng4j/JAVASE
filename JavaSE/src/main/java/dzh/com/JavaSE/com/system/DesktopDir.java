@@ -5,9 +5,9 @@ import java.io.File;
 
 public class DesktopDir {
     public static void main(String[] args) {
-        //当前用户桌面路径
-        File desktopDir = FileSystemView.getFileSystemView().getHomeDirectory();
-        String desktopPath = desktopDir.getAbsolutePath();
-        System.out.println("desktopPath = " + desktopPath);
+        //当前用户主页路径
+        File homeDir = FileSystemView.getFileSystemView().getHomeDirectory();
+        String homePath = homeDir.getAbsolutePath();
+        System.out.println("homePath = " + homePath);
     }
 }
