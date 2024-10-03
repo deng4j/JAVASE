@@ -1,13 +1,28 @@
 package dzh.com.JavaSE.com.system;
 
-import javax.swing.filechooser.FileSystemView;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class DesktopDir {
     public static void main(String[] args) {
-        //当前用户主页路径
-        File homeDir = FileSystemView.getFileSystemView().getHomeDirectory();
-        String homePath = homeDir.getAbsolutePath();
-        System.out.println("homePath = " + homePath);
+        String osName = System.getProperty("os.name");
+        String desktopPath = "";
+        if (osName.toLowerCase().contains("windows")) {
+            desktopPath = System.getProperty("user.home") + File.separator + "Desktop";
+        } else {
+            try {
+                Process process = Runtime.getRuntime().exec("xdg-user-dir DESKTOP");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                desktopPath = reader.readLine();
+                reader.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        System.out.println(desktopPath);
+
     }
 }
