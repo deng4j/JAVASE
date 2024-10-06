@@ -2315,11 +2315,97 @@ public static void main(String[] args) {
 
 在Valhalla项目中，Java的值类型方案被称为“内联类型”，计划通过一个新的关键字inline来定义，字节码层面也有专门与原生类型对应的以Q开头的新的操作码（譬如iload对应qload）来支撑。
 
+### 3.2 自动装箱、拆箱与遍历循环
+
+```java
+List<Integer> list = Arrays.asList(1, 2, 3, 4);
+int sum = 0;
+for (int i : list) {
+    sum += i;
+}
+System.out.println(sum);
+```
+
+编译后：
+
+```java
+List list = Arrays.asList(new Integer[]{
+        Integer.valueOf(1),
+        Integer.valueOf(2),
+        Integer.valueOf(3),
+        Integer.valueOf(4)});
+int sum = 0;
+for (Iterator localIterator = list.iterator(); localIterator.hasNext(); ) {
+    int i = ((Integer) localIterator.next()).intValue();
+    sum += i;
+}
+System.out.println(sum);
+```
+
+前面的代码中一共包含了泛型、自动装箱、自动拆箱、遍历循环与变长参数5种语法糖。泛型、自动装箱、自动拆箱就不用说了，而遍历循环则是把代码还原成了迭代器的实现，这也是为何遍历循环需要被遍历的类实现Iterable接口的原因。最后的变长参数，它在调用的时候变成了一个数组类型的参数。
+
+### 3.3 条件编译
+
+许多程序设计语言都提供了条件编译的途径，如C、C++中使用预处理器指示符（#ifdef）来完成条件编译。C、C++的预处理器最初的任务是解决编译时的代码依赖关系（如极为常用的#include预处理命令），而在Java语言之中并没有使用预处理器，因为Java语言天然的编译方式（编译器并非一个个地编译Java文件，而是将所有编译单元的语法树顶级节点输入到待处理列表后再进行编译，因此各个文件之间能够互相提供符号信息）就无须使用到预处理器。
+
+Java语言当然也可以进行条件编译，方法就是使用条件为常量的if语句。
+
+```java
+if (true) {
+    System.out.println("block 1");
+} else {
+    System.out.println("block 2");
+}
+```
+
+该代码编译后Class文件的反编译结果：
+
+```java
+System.out.println("block 1");
+```
+
+只能使用条件为常量的if语句才能达到上述效果，如果使用常量与其他带有条件判断能力的语句搭配，则可能在控制流分析中提示错误，被拒绝编译，如代码：
+
+```java
+// 编译器将会提示“Unreachable code”
+while (false) {
+    System.out.println("");
+}
+```
+
+ Java语言中条件编译的实现，也是Java语言的一颗语法糖，根据布尔常量值的真假，编译器将会把分支中不成立的代码块消除掉，这一工作将在编译器解除语法糖阶段（com.sun.tools.javac.comp.Lower类中）完成。
+
+由于这种条件编译的实现方式使用了if语句，所以它必须遵循最基本的Java语法，只能写在方法体内部，因此它只能实现语句基本块（Block）级别的条件编译，而没有办法实现根据条件调整整个Java类的结构。
+
 ## 2.实战：插入式注解处理器
 
 ### 2.1 实战目标
 
+通过Javac编译器的源码可以知道前端编译器在把Java程序源码编译为字节码的时候，会对Java程序源码做各方面的检查校验。这些校验主要是以程序“写得对不对”为出发点，虽然也会产生一些警告和提示类的信息，但总体来讲还是较少去校验程序“写得好不好”。
 
+有鉴于此，业界出现了许多针对程序“写得好不好”的辅助校验工具，如CheckStyle、FindBug、Klocwork等。这些代码校验工具有一些是基于Java的源码进行校验，有一些是通过扫描字节码来完成。
+
+在本节的实战中，我们将会使用注解处理器API来编写一款拥有自己编码风格的校验工具：NameCheckProcessor。
+
+- 类（或接口）：符合驼式命名法，首字母大写。
+- 方法：符合驼式命名法，首字母小写。
+- 字段：
+  - 类或实例变量。符合驼式命名法，首字母小写。
+  - 常量。要求全部由大写字母或下划线构成，并且第一个字符不能是下划线。
+
+### 2.2 代码实现
+
+要通过注解处理器API实现一个编译器插件，首先需要了解这组API的一些基本知识。实现注解处理器的代码需要继承抽象类javax.annotation.processing.AbstractProcessor，这个抽象类中只有一个子类必须实现的抽象方法：“process()”，它是Javac编译器在执行注解处理器代码时要调用的过程。可以从这个方法的第一个参数“annotations”中获取到此注解处理器所要处理的注解集合，从第二个参数“roundEnv”中访问到当前这个轮次（Round）中的抽象语法树节点，每个语法树节点在这里都表示为一个Element。
+
+在javax.lang.model.ElementKind中定义了18类Element，已经包括了Java代码中可能出现的全部元素，如：
+
+> “包（PACKAGE）、枚举（ENUM）、类（CLASS）、注解（ANNOTATION_TYPE）、接口（INTERFACE）、枚举值（ENUM_CONSTANT）、字段（FIELD）、参数（PARAMETER）、本地变量（LOCAL_VARIABLE）、异常（EXCEPTION_PARAMETER）、方法（METHOD）、构造函数（CONSTRUCTOR）、静态语句块（STATIC_INIT，即static{}块）、实例语句块（INSTANCE_INIT，即{}块）、参数化类型（TYPE_PARAMETER，泛型尖括号内的类型）、资源变量（RESOURCE_VARIABLE，try-resource中定义的变量）、模块（MODULE）和未定义的其他语法树节点（OTHER）”。
+
+除了process()方法的传入参数之外，还有一个很重要的实例变量“processingEnv”，它是AbstractProcessor中的一个protected变量，在注解处理器初始化的时候（init()方法执行的时候）创建，继承了AbstractProcessor的注解处理器代码可以直接访问它。它代表了注解处理器框架提供的一个上下文环境，要创建新的代码、向编译器输出信息、获取其他工具类等都需要用到这个实例变量。
+
+注解处理器除了process()方法及其参数之外，还有两个经常配合着使用的注解，分别是：@SupportedAnnotationTypes和@SupportedSourceVersion，前者代表了这个注解处理器对哪些注解感兴趣，可以使用星号“*”作为通配符代表对所有的注解都感兴趣，后者指出这个注解处理器可以处理哪些版本的Java代码。
+
+每一个注解处理器在运行时都是单例的，如果不需要改变或添加抽象语法树中的内容，process()方法就可以返回一个值为false的布尔值，通知编译器这个轮次中的代码未发生变化，无须构造新的JavaCompiler实例，在这次实战的注解处理器中只对程序命名进行检查，不需要改变语法树的内容，因此process()方法的返回值一律都是false。
 
 
 
