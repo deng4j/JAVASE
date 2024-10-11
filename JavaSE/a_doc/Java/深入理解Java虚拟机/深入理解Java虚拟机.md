@@ -26,16 +26,6 @@ JRE的内部有一个Java虚拟机（Java Virtual Machine，JVM）以及一些�
 
 ---
 
-**OpenJDK：**
-
-[OpenJDK Mercurial Repositories](https://hg.openjdk.org/)
-
-道OpenJDK是Sun公司在2006年年末把Java开源而形成的项目，这里的“开源”是通常意义上的源码开放形式，即源码是可被复用的，例如OracleJDK、Oracle OpenJDK、AdoptOpenJDK、Azul Zulu、SAP SapMachine、Amazon Corretto、IcedTea、UltraViolet等都是从OpenJDK源码衍生出的发行版。
-
-OpenJDK中的源码仓库只包含了标准Java SE的源代码，而一些额外的模块，典型的如JavaFX，虽然后来也是被Oracle开源并放到OpenJDK组织进行管理（OpenJFX项目），但是它是存放在独立的源码仓库中，因此OracleJDK的安装包中会包含JavaFX这种独立的模块，而用OpenJDK的话则需要单独下载安装。 
-
----
-
 ## 2.虚拟机介绍
 
 <font size="4" color="blue">虚拟机始祖：Sun Classic/Exact VM</font>
