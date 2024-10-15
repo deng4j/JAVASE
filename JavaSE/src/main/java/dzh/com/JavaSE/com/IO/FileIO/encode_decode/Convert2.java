@@ -1,10 +1,9 @@
-package dzh.com.JavaSE.com.IO.FileIO.convert;
+package dzh.com.JavaSE.com.IO.FileIO.encode_decode;
 
 import java.io.UnsupportedEncodingException;
 
 /**
  * 编码和解码字符集不一样会出现乱码
- * 电脑默认的GBK
  * 字节缺少，长度丢失
  */
 public class Convert2 {

@@ -165,7 +165,13 @@ PS Old Generation
 18502 interned Strings occupying 2407616 bytes.
 ```
 
-## 2.查看堆中的对象数量与大小
+## 2.查看堆大小
+
+```shell
+java -XX:+PrintFlagsFinal -version | findstr /i "HeapSize PermSize ThreadStackSize"
+```
+
+## 3.查看堆中的对象数量与大小
 
 ```shell
 [root@localhost ~]# jmap -histo 1632 | more
@@ -223,7 +229,7 @@ PS Old Generation
   20:          2412          96480  java.lang.ref.SoftReference
 ```
 
-## 3.导出JVM内存快照
+## 4.导出JVM内存快照
 
 ```shell
 [root@localhost ~]# jmap -dump:format=b,file=/usr/local/test_jvm.dump 1632
