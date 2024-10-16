@@ -11,12 +11,15 @@ import java.sql.Statement;
 import java.util.*;
 
 /**
- * Connection（数据库连接对象）作用：
- * 1.获取执行 SQL 的对象。
- * 2.管理事务：
- *      Statement createStatement()
- *      PreparedStatement  prepareStatement(sql)
- *      CallableStatement prepareCall(sql)。
+ *  Statement createStatement()： 每执行一条SQL语句，都会先将SQL语句发送给数据库，数据库先编译SQL，再执行。
+ *      普通的不带参的查询SQL；支持批量更新,批量删除;
+ *
+ *  PreparedStatement  prepareStatement(sql)：会先将SQL语句发送给数据库进行预编译，该对象会引用预编译后的结果。可以多次传入不同的参数给PreparedStatement对象并执行。若有上万条类似的插入数据的语句，数据库只需要预编译一次。这样一来就巧妙地减少了SQL语句的编译次数，提高了执行效率。
+ *      可变参数的SQL,编译一次,执行多次,效率高;
+ *      安全性好，有效防止Sql注入等问题;
+ *      支持批量更新,批量删除;
+ *
+ *  CallableStatement prepareCall(sql)。继承自PreparedStatement,支持带参数的SQL操作。支持调用存储过程,提供了对输出和输入/输出参数(INOUT)的支持
  */
 public class EmployeeDao {
     public static void main(String[] args) throws SQLException {
