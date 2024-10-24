@@ -62,3 +62,6 @@ hs_err_pid*
 
 ### 操作系统mac ###
 .DS_Store
+
+### office临时文件 ###
+~$*
